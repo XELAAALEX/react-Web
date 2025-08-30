@@ -1,23 +1,35 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
+/**
+ * Header Component
+ * Fixed navigation header with logo and menu items
+ * Responsive design that collapses on mobile devices
+ */
 const Header = () => {
   return (
     <header className="header">
-      {/* Logo */}
+      {/* Logo Section */}
       <div className="logo-container">
         <img
           className="logo"
           src="https://img.icons8.com/glyph-neue/64/waiter.png"
-          alt="Restaurant Logo"
+          alt="FoodieExpress Logo"
         />
       </div>
 
-      {/* Navigation and User Icon */}
+      {/* Navigation Menu */}
       <div className="nav-items">
         <ul className="headerList">
-          <li>Home</li>
-          <li>About</li>
-          <li>Support</li>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/about">About</Link>
+          </li>
+          <li>
+            <Link to="/support">Support</Link>
+          </li>
           <li className="cart-item">
             <img
               className="food-icon"
