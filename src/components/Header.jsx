@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import useOnlineOffline from "../Utils/useOnlineOffline";
 
 /**
  * Header Component
@@ -7,6 +8,8 @@ import { Link } from "react-router-dom";
  * Responsive design that collapses on mobile devices
  */
 const Header = () => {
+
+  let isOnline = useOnlineOffline();
   return (
     <header className="header">
       {/* Logo Section */}
@@ -21,6 +24,9 @@ const Header = () => {
       {/* Navigation Menu */}
       <div className="nav-items">
         <ul className="headerList">
+          <li>
+             <div>{isOnline ? "✅ Online" : "❌ Disconnected"}</div>
+          </li>
           <li>
             <Link to="/">Home</Link>
           </li>

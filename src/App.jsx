@@ -1,13 +1,14 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import Header from "./components/Header";
 import Body from "./components/Body";
 import Footer from "./components/Footer";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import AboutUs from "./components/AboutUs";
 import Support from "./components/Support";
 import RestaurantMenu from "./components/RestaurantMenu";
 import "./styles.css"; // Import the single CSS file
+
+const AboutUs = lazy(() => import("./components/AboutUs"));
 
 /**
  * Main App Layout Component
@@ -54,7 +55,11 @@ const appRouter = createBrowserRouter([
   {
     // About page as standalone route (no header/footer as per original code)
     path: "/about",
-    element: <AboutUs />
+    element: (
+      <Suspense fallback={<div className="loading">Loading About Us...</div>}>
+        <AboutUs />
+      </Suspense>
+    ),
   }
 ]);
 

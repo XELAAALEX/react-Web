@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import RestaurantCard from './RestaurantCard';
 import Shimmer from './Shimmer';
 import { SWIGGY_API_URL } from '../config/constants';
+import useOnlineOffline from '../Utils/useOnlineOffline';
+import UserOffline from './UserOffline';
 
 /**
  * Body Component - Main content area with search and restaurant listings
@@ -70,7 +72,12 @@ function Body() {
   useEffect(() => {
     fetchRestaurants();
   }, []);
+    let isOnline = useOnlineOffline();
 
+
+    if (!isOnline) {
+    return <UserOffline onRetry={() => window.location.reload()} />;
+  }
   return (
     <div>
       {/* Search Bar Section */}

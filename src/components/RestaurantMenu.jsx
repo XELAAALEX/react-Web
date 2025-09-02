@@ -1,104 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
-import { IMAGE_CDN_URL, SWIGGY_RESTAURENT_URL } from "../config/constants";
+import { IMAGE_CDN_URL } from "../config/constants";
 import { RestaurantMenuShimmer } from "./RestaurantMenuShimmer";
+import useRestaurantMenu from "../Utils/useRestaurants";
 
 /**
  * RestaurantMenu Component
- * Displays detailed restaurant information and menu items
- * Fetches data based on restaurant ID from URL parameters
+ * Uses custom hook (useRestaurantMenu) to display menu data
  */
 const RestaurantMenu = () => {
-  // Get restaurant ID from URL parameters
+  // Get restaurant ID from URL params
   const { resid } = useParams();
-  
-  // State management for restaurant data and loading
-  const [restaurantInfo, setRestaurantInfo] = useState(null);
-  const [itemCards, setItemCards] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  /**
-   * Fetch restaurant menu data from Swiggy API
-   * Handles API response parsing and error management
-   * @param {string} restaurantId - ID of the restaurant to fetch
-   */
-  const fetchMenuData = async (restaurantId) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await fetch(`${SWIGGY_RESTAURENT_URL}${restaurantId}`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const json = await response.json();
+  // Use custom hook
+  const { restaurantInfo, itemCards, loading, error, refetch } =
+    useRestaurantMenu(resid);
 
-      // Extract restaurant info from API response
-      const info = json?.data?.cards?.[2]?.card?.card?.info;
-      if (!info) {
-        throw new Error("Restaurant information not found");
-      }
-      setRestaurantInfo(info);
+  // Format price helper
+  const formatPrice = (priceInPaise) =>
+    priceInPaise ? Math.floor(priceInPaise / 100) : 0;
 
-      // Extract menu items from API response
-      const cards = json?.data?.cards?.[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards || [];
-      const items = cards.find((c) => c?.card?.card?.itemCards)?.card?.card?.itemCards || [];
-      setItemCards(items);
-      
-    } catch (error) {
-      console.error("Error fetching menu data:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /**
-   * Effect hook to fetch menu data when component mounts or resid changes
-   */
-  useEffect(() => {
-    if (resid) {
-      fetchMenuData(resid);
-    }
-  }, [resid]);
-
-  /**
-   * Format price from paise to rupees
-   * @param {number} priceInPaise - Price in paise
-   * @returns {number} - Price in rupees
-   */
-  const formatPrice = (priceInPaise) => {
-    return priceInPaise ? Math.floor(priceInPaise / 100) : 0;
-  };
-
-  /**
-   * Truncate description text for better display
-   * @param {string} text - Text to truncate
-   * @param {number} maxLength - Maximum length
-   * @returns {string} - Truncated text
-   */
+  // Truncate description helper
   const truncateDescription = (text, maxLength = 80) => {
     if (!text) return "";
     return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
   };
 
-  // Show shimmer loading while fetching data
-  if (loading) {
-    return <RestaurantMenuShimmer />;
-  }
+  // Loading state
+  if (loading) return <RestaurantMenuShimmer />;
 
-  // Show error message if data fetch failed
+  // Error state
   if (error) {
     return (
       <div className="menu-container">
         <div className="error-message">
           <h2>Unable to load restaurant menu</h2>
           <p>Error: {error}</p>
-          <button 
-            onClick={() => fetchMenuData(resid)}
+          <button
+            onClick={() => refetch(resid)}
             style={{
               backgroundColor: "#e53e3e",
               color: "white",
@@ -106,7 +45,7 @@ const RestaurantMenu = () => {
               padding: "10px 20px",
               borderRadius: "6px",
               cursor: "pointer",
-              marginTop: "10px"
+              marginTop: "10px",
             }}
           >
             Try Again
@@ -116,19 +55,19 @@ const RestaurantMenu = () => {
     );
   }
 
-  // Show message if no restaurant info found
+  // No data found
   if (!restaurantInfo) {
     return (
       <div className="menu-container">
         <div className="error-message">
           <h2>Restaurant not found</h2>
-          <p>The restaurant you're looking for doesn't exist or has been removed.</p>
+          <p>The restaurant you’re looking for doesn’t exist or was removed.</p>
         </div>
       </div>
     );
   }
 
-  // Destructure restaurant information
+  // Destructure restaurant info
   const {
     cloudinaryImageId,
     name,
@@ -142,7 +81,7 @@ const RestaurantMenu = () => {
 
   return (
     <div className="menu-container">
-      {/* Restaurant Header Information */}
+      {/* Restaurant Info */}
       <div className="menu-header">
         <img
           src={IMAGE_CDN_URL + cloudinaryImageId}
@@ -154,14 +93,16 @@ const RestaurantMenu = () => {
           <h3>{locality}</h3>
           <p>{cuisines?.join(", ")}</p>
           {avgRatingString && (
-            <p>⭐ {avgRatingString} ({totalRatingsString})</p>
+            <p>
+              ⭐ {avgRatingString} ({totalRatingsString})
+            </p>
           )}
           <p>{costForTwoMessage}</p>
           <p>{sla?.slaString}</p>
         </div>
       </div>
 
-      {/* Menu Items List */}
+      {/* Menu List */}
       <div>
         <h2 style={{ marginBottom: "20px", color: "#2d3748" }}>Menu</h2>
         {itemCards.length > 0 ? (
@@ -200,10 +141,7 @@ const RestaurantMenu = () => {
                   )}
                   <button
                     className="add-button"
-                    onClick={() => {
-                      // Here you would typically add item to cart
-                      alert(`Added ${itemName} to cart!`);
-                    }}
+                    onClick={() => alert(`Added ${itemName} to cart!`)}
                   >
                     ADD
                   </button>
