@@ -13,3 +13,5 @@ export const SWIGGY_API_URL = "https://www.swiggy.com/dapi/restaurants/list/v5?l
 // Swiggy API endpoint for individual restaurant menus
 // Restaurant ID should be appended to this URL
 export const SWIGGY_RESTAURENT_URL = "https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=13.0362561&lng=80.16125199999999&restaurantId=";
+
+export const GITHUB_API = "https://api.github.com/users/XELAAALEX";
