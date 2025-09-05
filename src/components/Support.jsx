@@ -158,10 +158,10 @@ const Support = () => {
   };
 
   return (
-    <div style={styles.container}>
+    <div className="max-w-4xl mx-auto py-10 px-5 font-sans text-gray-800 leading-relaxed">
       {/* Page Header */}
-      <h1 style={styles.heading}>FoodieExpress Support</h1>
-      <p style={styles.subtitle}>We're here to help you with any questions or concerns</p>
+      <h1 className="text-center text-5xl mb-2.5 bg-gradient-to-br from-[#ff6b6b] to-[#ffa500] bg-clip-text text-transparent font-bold">FoodieExpress Support</h1>
+      <p className="text-center text-xl text-gray-600 mb-10">We're here to help you with any questions or concerns</p>
       
       {/* Tab Navigation */}
       <div style={styles.tabContainer}>
